@@ -10,18 +10,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
-import json
-
 from amazon_music import AmazonMusic
 from getpass import getpass
 
-am = AmazonMusic()
-
-if len(sys.argv) < 2:
-    raise Exception("search term was not provided")
-
 amzn = AmazonMusic(email=input("Email: "), password=getpass("Password: "))
 
-results = amzn.search(' '.join(sys.argv[1:]))
-print(json.dumps(results, sort_keys=True, indent=2))
+for album in amzn.albums_in_library():
+    print('[{}] "{}" by {}: {} tracks'.format(album.id, album.name,
+                                              album.artist, album.track_count))

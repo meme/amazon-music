@@ -10,18 +10,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
-import json
-
 from amazon_music import AmazonMusic
 from getpass import getpass
+import os, sys
 
-am = AmazonMusic()
-
-if len(sys.argv) < 2:
-    raise Exception("search term was not provided")
+if len(sys.argv) <= 1:
+    raise Exception("ASIN was not provided (e.g.: B07G3KXWLC)")
 
 amzn = AmazonMusic(email=input("Email: "), password=getpass("Password: "))
 
-results = amzn.search(' '.join(sys.argv[1:]))
-print(json.dumps(results, sort_keys=True, indent=2))
+playlist = amzn.playlist(sys.argv[1])
+
+print("'{}', ({} of 5 rating)".format(playlist.name, playlist.rating))
+print("(Cover URL can be found at {})".format(playlist.cover_url))
+
+for t in playlist.tracks():
+    print("{} - {} ({})".format(t.name, t.artist, t.album))
+    # print("\t{}".format(t.url()))
+    os.system("cvlc --play-and-exit {}".format(t.url()))
